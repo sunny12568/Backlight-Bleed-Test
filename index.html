@@ -1,0 +1,1109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Bootstrap 5 + icons -->
+    <title>
+      Backlight Bleed Test — Free Online Black Screen Uniformity Check
+    </title>
+    <meta
+      name="description"
+      content="Free online backlight bleed test. Detect IPS glow, clouding, and uneven backlighting on your monitor, laptop, or TV using a pure black screen. No download required."
+    />
+    <meta
+      name="keywords"
+      content="backlight bleed test, black screen test, IPS glow test, monitor uniformity test, screen clouding, display test, backlight bleeding, dead pixel test, monitor test online"
+    />
+    <meta name="author" content="BacklightTest" />
+    <meta
+      name="robots"
+      content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: #07090c;
+        font-family:
+          "Inter",
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        color: #eef2f6;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        line-height: 1.5;
+      }
+
+      /* subtle noise / grid background */
+      .page-bg {
+        position: fixed;
+        inset: 0;
+        background-image:
+          radial-gradient(
+            circle at 25% 30%,
+            rgba(80, 120, 255, 0.03) 0%,
+            transparent 40%
+          ),
+          radial-gradient(
+            circle at 75% 70%,
+            rgba(200, 80, 255, 0.03) 0%,
+            transparent 40%
+          ),
+          linear-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+        background-size:
+          100% 100%,
+          100% 100%,
+          60px 60px,
+          60px 60px;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .main-wrapper {
+        position: relative;
+        z-index: 1;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* ---------- NAV ---------- */
+      .navbar-custom {
+        padding: 1rem 0;
+        background: rgba(7, 9, 12, 0.75);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      }
+
+      .navbar-brand {
+        font-weight: 700;
+        font-size: 1.15rem;
+        letter-spacing: -0.3px;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .brand-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #6ea8fe;
+        box-shadow: 0 0 12px #6ea8fe88;
+        display: inline-block;
+      }
+
+      .nav-link-custom {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-decoration: none;
+        padding: 0.4rem 0.9rem;
+        border-radius: 60px;
+        transition:
+          color 0.15s,
+          background 0.15s;
+      }
+
+      .nav-link-custom:hover {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      /* ---------- HERO ---------- */
+      .hero-section {
+        padding: 3.5rem 0 2rem;
+      }
+
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(110, 168, 254, 0.08);
+        border: 1px solid rgba(110, 168, 254, 0.18);
+        color: #a7c8ff;
+        font-size: 0.75rem;
+        font-weight: 500;
+        letter-spacing: 0.3px;
+        padding: 0.35rem 0.9rem;
+        border-radius: 60px;
+        margin-bottom: 1.25rem;
+      }
+
+      .hero-title {
+        font-size: clamp(2.2rem, 5vw, 3.4rem);
+        font-weight: 700;
+        letter-spacing: -1.5px;
+        line-height: 1.1;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #ffffff 0%, #b8c4d6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .hero-sub {
+        font-size: 1.05rem;
+        color: rgba(255, 255, 255, 0.55);
+        max-width: 620px;
+        margin: 0 auto 2rem;
+        font-weight: 400;
+      }
+
+      /* ---------- TEST CARD ---------- */
+      .test-card {
+        background: #0b0f14;
+        border-radius: 2rem;
+        padding: 1.5rem 1.75rem 2rem;
+        box-shadow:
+          0 40px 80px -20px rgba(0, 0, 0, 0.9),
+          0 0 0 1px rgba(255, 255, 255, 0.04),
+          inset 0 1px 0 rgba(255, 255, 255, 0.03);
+        max-width: 920px;
+        width: 100%;
+        margin: 0 auto;
+        transition: box-shadow 0.3s;
+      }
+
+      .bleed-canvas {
+        background: #000000;
+        border-radius: 1.25rem;
+        aspect-ratio: 16 / 9;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.06),
+          0 25px 50px -12px black,
+          inset 0 0 120px rgba(0, 0, 0, 0.8);
+        transition:
+          background 0.2s,
+          box-shadow 0.2s;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        user-select: none;
+      }
+
+      .bleed-canvas.glowing {
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.09),
+          0 25px 55px -10px #000,
+          0 0 60px 4px rgba(255, 255, 255, 0.025);
+      }
+
+      .canvas-overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+        color: rgba(255, 255, 255, 0.045);
+        font-size: clamp(0.9rem, 3.5vw, 1.6rem);
+        font-weight: 600;
+        letter-spacing: 6px;
+        text-transform: uppercase;
+        transition:
+          opacity 0.2s,
+          color 0.2s;
+      }
+
+      .bleed-canvas.glowing .canvas-overlay {
+        color: rgba(255, 255, 255, 0.065);
+      }
+
+      .canvas-overlay small {
+        font-size: 0.45em;
+        letter-spacing: 2px;
+        font-weight: 400;
+        margin-top: 0.5rem;
+        opacity: 0.6;
+        text-transform: none;
+      }
+
+      /* ---------- CONTROL BAR ---------- */
+      .control-bar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 1.5rem;
+        gap: 1rem;
+      }
+
+      .btn-group-custom {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      .btn-outline-light-custom {
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: rgba(255, 255, 255, 0.75);
+        background: transparent;
+        padding: 0.55rem 1.3rem;
+        border-radius: 60px;
+        font-weight: 500;
+        font-size: 0.85rem;
+        transition: all 0.2s;
+        letter-spacing: 0.2px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        white-space: nowrap;
+      }
+
+      .btn-outline-light-custom i {
+        font-size: 1rem;
+      }
+
+      .btn-outline-light-custom:hover,
+      .btn-outline-light-custom.active {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.4);
+        color: white;
+      }
+
+      .btn-outline-light-custom:focus-visible {
+        outline: 2px solid #6ea8fe;
+        outline-offset: 2px;
+      }
+
+      .brightness-indicator {
+        color: rgba(255, 255, 255, 0.55);
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: rgba(255, 255, 255, 0.02);
+        padding: 0.5rem 1.1rem;
+        border-radius: 60px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        cursor: pointer;
+        transition:
+          border-color 0.2s,
+          background 0.2s;
+      }
+
+      .brightness-indicator:hover {
+        border-color: rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .brightness-indicator span {
+        color: white;
+        font-weight: 600;
+        min-width: 2.8rem;
+        text-align: center;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .brightness-indicator .dot {
+        opacity: 0.3;
+        font-size: 0.5rem;
+      }
+
+      .brightness-indicator .label-sm {
+        font-size: 0.72rem;
+        letter-spacing: 0.3px;
+        opacity: 0.7;
+      }
+
+      /* ---------- FEATURES ---------- */
+      .features-section {
+        padding: 4rem 0 3rem;
+      }
+
+      .feature-card {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 1.5rem;
+        padding: 1.75rem 1.5rem;
+        height: 100%;
+        transition:
+          transform 0.25s,
+          border-color 0.25s,
+          background 0.25s;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(110, 168, 254, 0.2);
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .feature-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: rgba(110, 168, 254, 0.08);
+        border: 1px solid rgba(110, 168, 254, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        color: #a7c8ff;
+        margin-bottom: 1rem;
+      }
+
+      .feature-title {
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.2px;
+      }
+
+      .feature-text {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.45);
+        line-height: 1.6;
+      }
+
+      /* ---------- INSTRUCTIONS ---------- */
+      .instructions-section {
+        padding: 2rem 0 4rem;
+      }
+
+      .instruction-step {
+        display: flex;
+        gap: 1.25rem;
+        padding: 1.25rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        align-items: flex-start;
+      }
+
+      .instruction-step:last-child {
+        border-bottom: none;
+      }
+
+      .step-num {
+        flex-shrink: 0;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba(110, 168, 254, 0.1);
+        border: 1px solid rgba(110, 168, 254, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #a7c8ff;
+      }
+
+      .step-title {
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin-bottom: 0.25rem;
+      }
+
+      .step-desc {
+        font-size: 0.82rem;
+        color: rgba(255, 255, 255, 0.4);
+        line-height: 1.6;
+      }
+
+      /* ---------- FOOTER ---------- */
+      .footer-custom {
+        padding: 2rem 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.04);
+        font-size: 0.78rem;
+        color: rgba(255, 255, 255, 0.25);
+      }
+
+      .footer-custom a {
+        color: rgba(255, 255, 255, 0.4);
+        text-decoration: none;
+        transition: color 0.15s;
+      }
+
+      .footer-custom a:hover {
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      /* ---------- FULLSCREEN ---------- */
+      :-webkit-full-screen .test-card {
+        max-width: 100%;
+        margin: 0;
+        border-radius: 0;
+        padding: 1rem;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background: #000;
+      }
+
+      :-moz-full-screen .test-card {
+        max-width: 100%;
+        margin: 0;
+        border-radius: 0;
+        padding: 1rem;
+        height: 100vh;
+        background: #000;
+      }
+
+      :fullscreen .test-card {
+        max-width: 100%;
+        margin: 0;
+        border-radius: 0;
+        padding: 1rem;
+        height: 100vh;
+        background: #000;
+      }
+
+      :-webkit-full-screen .bleed-canvas {
+        aspect-ratio: auto;
+        height: 80vh;
+        border-radius: 0.5rem;
+      }
+
+      :fullscreen .bleed-canvas {
+        aspect-ratio: auto;
+        height: 80vh;
+        border-radius: 0.5rem;
+      }
+
+      :-webkit-full-screen .control-bar,
+      :fullscreen .control-bar {
+        opacity: 0.3;
+        transition: opacity 0.3s;
+      }
+
+      :-webkit-full-screen .control-bar:hover,
+      :fullscreen .control-bar:hover {
+        opacity: 1;
+      }
+
+      /* ---------- RESPONSIVE ---------- */
+      @media (max-width: 576px) {
+        .test-card {
+          padding: 1rem 1rem 1.5rem;
+          border-radius: 1.5rem;
+        }
+
+        .bleed-canvas {
+          border-radius: 0.9rem;
+        }
+
+        .control-bar {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .btn-group-custom {
+          justify-content: center;
+        }
+
+        .brightness-indicator {
+          justify-content: center;
+        }
+
+        .hero-section {
+          padding: 2.5rem 0 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-bg"></div>
+
+    <div class="main-wrapper">
+      <!-- NAVBAR -->
+      <nav class="navbar-custom">
+        <div
+          class="container d-flex align-items-center justify-content-between"
+        >
+          <a href="#" class="navbar-brand">
+            <span class="brand-dot"></span>
+            BacklightTest
+          </a>
+          <div class="d-flex align-items-center gap-1">
+            <a href="#test" class="nav-link-custom d-none d-sm-inline-block"
+              >Test</a
+            >
+            <a href="#features" class="nav-link-custom d-none d-sm-inline-block"
+              >Features</a
+            >
+            <a href="#how" class="nav-link-custom d-none d-sm-inline-block"
+              >How to use</a
+            >
+            <a
+              href="#test"
+              class="btn-outline-light-custom d-none d-md-inline-flex"
+              style="padding: 0.4rem 1rem; font-size: 0.78rem"
+            >
+              <i class="bi bi-play-fill"></i> Run test
+            </a>
+          </div>
+        </div>
+      </nav>
+
+      <!-- HERO + TEST -->
+      <section class="hero-section" id="test">
+        <div class="container">
+          <div class="text-center">
+            <div class="hero-badge">
+              <i class="bi bi-shield-check"></i>
+              Pure black uniformity check
+            </div>
+            <h1 class="hero-title">Backlight Bleed Test</h1>
+            <p class="hero-sub">
+              Detect uneven backlighting, clouding, and IPS glow on your
+              monitor, laptop, or TV. Use a pure black background and adjust
+              brightness to reveal imperfections.
+            </p>
+          </div>
+
+          <!-- TEST CARD -->
+          <div class="test-card">
+            <div
+              id="bleedCanvas"
+              class="bleed-canvas glowing"
+              title="Double-click or press 'B' to cycle brightness · Press 'G' to toggle glow"
+            >
+              <div class="canvas-overlay">
+                BLACK TEST
+                <small>Double‑click to adjust brightness</small>
+              </div>
+            </div>
+
+            <!-- CONTROLS -->
+            <div class="control-bar">
+              <div class="btn-group-custom">
+                <button id="fullscreenBtn" class="btn-outline-light-custom">
+                  <i class="bi bi-arrows-fullscreen"></i> Fullscreen
+                </button>
+                <button
+                  id="toggleGlowBtn"
+                  class="btn-outline-light-custom active"
+                >
+                  <i class="bi bi-sun"></i> Glow: ON
+                </button>
+              </div>
+              <div
+                class="brightness-indicator"
+                id="brightnessIndicator"
+                title="Click to cycle brightness levels"
+              >
+                <i
+                  class="bi bi-brightness-high"
+                  style="opacity: 0.5; font-size: 0.9rem"
+                ></i>
+                <span id="brightnessLabel">100%</span>
+                <span class="dot">●</span>
+                <span class="label-sm">Backlight</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FEATURES -->
+      <section class="features-section" id="features">
+        <div class="container">
+          <div class="text-center mb-5">
+            <h2
+              class="fw-bold"
+              style="font-size: 1.6rem; letter-spacing: -0.5px"
+            >
+              Why use this test?
+            </h2>
+            <p
+              style="
+                color: rgba(255, 255, 255, 0.4);
+                font-size: 0.9rem;
+                max-width: 520px;
+                margin: 0.5rem auto 0;
+              "
+            >
+              A proper evaluation requires a controlled black level and the
+              ability to see subtle luminance variations.
+            </p>
+          </div>
+          <div class="row g-4">
+            <div class="col-md-4">
+              <div class="feature-card">
+                <div class="feature-icon"><i class="bi bi-eye"></i></div>
+                <div class="feature-title">Reveal hidden bleed</div>
+                <p class="feature-text">
+                  Pure black exposes light leaking from edges, corners, or
+                  uneven zones that are invisible on bright content.
+                </p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="feature-card">
+                <div class="feature-icon"><i class="bi bi-sliders"></i></div>
+                <div class="feature-title">Adjustable brightness</div>
+                <p class="feature-text">
+                  Cycle through brightness presets (100% down to 0%) to simulate
+                  different backlight intensities and spot clouding.
+                </p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="feature-card">
+                <div class="feature-icon"><i class="bi bi-fullscreen"></i></div>
+                <div class="feature-title">Fullscreen mode</div>
+                <p class="feature-text">
+                  Expand the test area to fill your entire screen for an
+                  immersive, distraction‑free evaluation.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- HOW TO USE -->
+      <section class="instructions-section" id="how">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-lg-7">
+              <h2
+                class="fw-bold mb-4 text-center"
+                style="font-size: 1.4rem; letter-spacing: -0.3px"
+              >
+                How to test properly
+              </h2>
+
+              <div class="instruction-step">
+                <div class="step-num">1</div>
+                <div>
+                  <div class="step-title">Dim the room lights</div>
+                  <div class="step-desc">
+                    Ambient light can mask backlight bleed. Work in a dark or
+                    very dim room for the most accurate assessment.
+                  </div>
+                </div>
+              </div>
+
+              <div class="instruction-step">
+                <div class="step-num">2</div>
+                <div>
+                  <div class="step-title">Enter fullscreen</div>
+                  <div class="step-desc">
+                    Click the <strong>Fullscreen</strong> button so the black
+                    area fills your entire display. This removes distractions
+                    and reveals edge bleed.
+                  </div>
+                </div>
+              </div>
+
+              <div class="instruction-step">
+                <div class="step-num">3</div>
+                <div>
+                  <div class="step-title">Cycle brightness levels</div>
+                  <div class="step-desc">
+                    Double‑click the black area or press
+                    <kbd
+                      style="
+                        background: rgba(255, 255, 255, 0.08);
+                        padding: 0.15rem 0.4rem;
+                        border-radius: 4px;
+                      "
+                      >B</kbd
+                    >
+                    to step through brightness presets. Lower percentages make
+                    the black background lighter, which can expose clouding.
+                  </div>
+                </div>
+              </div>
+
+              <div class="instruction-step">
+                <div class="step-num">4</div>
+                <div>
+                  <div class="step-title">Toggle glow (optional)</div>
+                  <div class="step-desc">
+                    Press
+                    <kbd
+                      style="
+                        background: rgba(255, 255, 255, 0.08);
+                        padding: 0.15rem 0.4rem;
+                        border-radius: 4px;
+                      "
+                      >G</kbd
+                    >
+                    or click the <strong>Glow</strong> button to add a very
+                    subtle base lift. This simulates a typical backlight‑on
+                    state and helps visualise faint bleed. For a strict black
+                    test, turn glow off.
+                  </div>
+                </div>
+              </div>
+
+              <div class="instruction-step">
+                <div class="step-num">5</div>
+                <div>
+                  <div class="step-title">Look for uniformity issues</div>
+                  <div class="step-desc">
+                    Check corners, edges, and the center. Bleed appears as
+                    lighter patches, yellowish or bluish halos, or “flashlight”
+                    corners.
+                  </div>
+                </div>
+              </div>
+              <!-- ==================== ADD THIS SECTION ==================== -->
+              <!-- Place this section in the main content area, 
+     right after the "How to test properly" section 
+     and before the footer -->
+
+              <!-- RELATED TOOLS / BACKLINK SECTION -->
+              <section
+                class="related-tools-section"
+                id="related-tools"
+                style="padding: 3rem 0 2rem"
+              >
+                <div class="container">
+                  <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                      <div
+                        class="related-tool-card"
+                        style="
+                          background: linear-gradient(
+                            135deg,
+                            rgba(110, 168, 254, 0.06) 0%,
+                            rgba(110, 168, 254, 0.02) 100%
+                          );
+                          border: 1px solid rgba(110, 168, 254, 0.15);
+                          border-radius: 1.5rem;
+                          padding: 2rem 2rem 1.75rem;
+                          transition:
+                            border-color 0.25s,
+                            box-shadow 0.25s;
+                        "
+                      >
+                        <div class="d-flex align-items-start gap-3 mb-3">
+                          <div
+                            style="
+                              width: 44px;
+                              height: 44px;
+                              border-radius: 12px;
+                              background: rgba(110, 168, 254, 0.1);
+                              border: 1px solid rgba(110, 168, 254, 0.2);
+                              display: flex;
+                              align-items: center;
+                              justify-content: center;
+                              font-size: 1.25rem;
+                              color: #a7c8ff;
+                              flex-shrink: 0;
+                            "
+                          >
+                            <i class="bi bi-camera-video"></i>
+                          </div>
+                          <div>
+                            <h3
+                              style="
+                                font-size: 1.15rem;
+                                font-weight: 600;
+                                letter-spacing: -0.3px;
+                                margin-bottom: 0.35rem;
+                                color: #fff;
+                              "
+                            >
+                              Also test your webcam
+                            </h3>
+                            <p
+                              style="
+                                font-size: 0.85rem;
+                                color: rgba(255, 255, 255, 0.45);
+                                margin: 0;
+                                line-height: 1.6;
+                              "
+                            >
+                              Before your next video call, quickly verify that
+                              your webcam is working properly. Check resolution,
+                              aspect ratio, capture snapshots, and download
+                              sample photos — all running securely in your
+                              browser.
+                            </p>
+                          </div>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                          <span
+                            style="
+                              font-size: 0.72rem;
+                              color: rgba(255, 255, 255, 0.4);
+                              background: rgba(255, 255, 255, 0.03);
+                              border: 1px solid rgba(255, 255, 255, 0.06);
+                              padding: 0.25rem 0.7rem;
+                              border-radius: 60px;
+                            "
+                            >✅ Live preview</span
+                          >
+                          <span
+                            style="
+                              font-size: 0.72rem;
+                              color: rgba(255, 255, 255, 0.4);
+                              background: rgba(255, 255, 255, 0.03);
+                              border: 1px solid rgba(255, 255, 255, 0.06);
+                              padding: 0.25rem 0.7rem;
+                              border-radius: 60px;
+                            "
+                            >✅ Snapshot capture</span
+                          >
+                          <span
+                            style="
+                              font-size: 0.72rem;
+                              color: rgba(255, 255, 255, 0.4);
+                              background: rgba(255, 255, 255, 0.03);
+                              border: 1px solid rgba(255, 255, 255, 0.06);
+                              padding: 0.25rem 0.7rem;
+                              border-radius: 60px;
+                            "
+                            >✅ No sign-up</span
+                          >
+                          <span
+                            style="
+                              font-size: 0.72rem;
+                              color: rgba(255, 255, 255, 0.4);
+                              background: rgba(255, 255, 255, 0.03);
+                              border: 1px solid rgba(255, 255, 255, 0.06);
+                              padding: 0.25rem 0.7rem;
+                              border-radius: 60px;
+                            "
+                            >✅ 100% private</span
+                          >
+                        </div>
+
+                        <a
+                          href="https://cameratest.org/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="btn-outline-light-custom"
+                          style="
+                            display: inline-flex;
+                            align-items: center;
+                            gap: 0.5rem;
+                            text-decoration: none;
+                            padding: 0.6rem 1.4rem;
+                            font-size: 0.85rem;
+                          "
+                        >
+                          <i class="bi bi-box-arrow-up-right"></i>
+                          Go to Webcam Test (cameratest.org)
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+              <!-- ==================== END ADDED SECTION ==================== -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+      <footer class="footer-custom">
+        <div
+          class="container d-flex flex-wrap justify-content-between align-items-center gap-2"
+        >
+          <div>© 2025 BacklightTest — For display evaluation.</div>
+          <div class="d-flex gap-3">
+            <a href="#test">Test</a>
+            <a href="#features">Features</a>
+            <a href="#how">Guide</a>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+      (function () {
+        // ---------- DOM refs ----------
+        const canvas = document.getElementById("bleedCanvas");
+        const fullscreenBtn = document.getElementById("fullscreenBtn");
+        const toggleGlowBtn = document.getElementById("toggleGlowBtn");
+        const brightnessLabel = document.getElementById("brightnessLabel");
+        const brightnessIndicator = document.getElementById(
+          "brightnessIndicator",
+        );
+
+        // ---------- State ----------
+        let glowEnabled = true;
+        let brightnessValue = 100; // 100 = pure black, 0 = max visible grey
+
+        // brightness steps (percentage)
+        const brightnessSteps = [100, 90, 75, 60, 45, 30, 15, 0];
+
+        // ---------- Core: apply brightness & glow ----------
+        function applyBrightness() {
+          // max gray intensity at 0% brightness: 12% of 255 ≈ 30
+          const maxGray = 0.12;
+          const grayIntensity = Math.round(
+            (1 - brightnessValue / 100) * maxGray * 255,
+          );
+
+          // base lift if glow is ON (simulates backlight bleed)
+          let baseLift = 0;
+          if (glowEnabled) {
+            baseLift = 4; // ~ #040404
+          }
+
+          // final channel value (capped at 30 to stay dark)
+          const finalChannel = Math.min(30, baseLift + grayIntensity);
+
+          canvas.style.backgroundColor = `rgb(${finalChannel}, ${finalChannel}, ${finalChannel})`;
+        }
+
+        // ---------- Update brightness label ----------
+        function updateBrightnessLabel() {
+          brightnessLabel.textContent = brightnessValue + "%";
+        }
+
+        // ---------- Update glow button + state ----------
+        function updateGlowState() {
+          if (glowEnabled) {
+            canvas.classList.add("glowing");
+            toggleGlowBtn.classList.add("active");
+            toggleGlowBtn.innerHTML = '<i class="bi bi-sun"></i> Glow: ON';
+          } else {
+            canvas.classList.remove("glowing");
+            toggleGlowBtn.classList.remove("active");
+            toggleGlowBtn.innerHTML = '<i class="bi bi-sun"></i> Glow: OFF';
+          }
+          applyBrightness(); // reapply because baseLift changes
+        }
+
+        // ---------- Cycle brightness (used by double-click, click on indicator, key B) ----------
+        function cycleBrightness() {
+          const currentIndex = brightnessSteps.indexOf(brightnessValue);
+          const nextIndex = (currentIndex + 1) % brightnessSteps.length;
+          brightnessValue = brightnessSteps[nextIndex];
+          updateBrightnessLabel();
+          applyBrightness();
+        }
+
+        // ---------- Fullscreen ----------
+        function toggleFullscreen() {
+          if (!document.fullscreenElement) {
+            const testCard = document.querySelector(".test-card");
+            if (testCard.requestFullscreen) {
+              testCard.requestFullscreen();
+            } else if (testCard.webkitRequestFullscreen) {
+              testCard.webkitRequestFullscreen();
+            } else if (testCard.msRequestFullscreen) {
+              testCard.msRequestFullscreen();
+            }
+          } else {
+            if (document.exitFullscreen) {
+              document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+              document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+              document.msExitFullscreen();
+            }
+          }
+        }
+
+        function updateFullscreenButton() {
+          if (document.fullscreenElement) {
+            fullscreenBtn.innerHTML =
+              '<i class="bi bi-fullscreen-exit"></i> Exit';
+          } else {
+            fullscreenBtn.innerHTML =
+              '<i class="bi bi-arrows-fullscreen"></i> Fullscreen';
+          }
+        }
+
+        // ---------- Event Listeners ----------
+        // Fullscreen button
+        fullscreenBtn.addEventListener("click", toggleFullscreen);
+
+        // Glow toggle
+        toggleGlowBtn.addEventListener("click", function () {
+          glowEnabled = !glowEnabled;
+          updateGlowState();
+        });
+
+        // Double-click on canvas cycles brightness
+        canvas.addEventListener("dblclick", function (e) {
+          e.preventDefault();
+          cycleBrightness();
+        });
+
+        // Click on brightness indicator cycles brightness
+        brightnessIndicator.addEventListener("click", function (e) {
+          cycleBrightness();
+        });
+
+        // Keyboard shortcuts: B = brightness cycle, G = glow toggle
+        window.addEventListener("keydown", function (e) {
+          // Don't interfere if user is typing in an input/textarea (none here, but future-proof)
+          const tag = document.activeElement?.tagName;
+          if (tag === "INPUT" || tag === "TEXTAREA") return;
+
+          if (e.key === "b" || e.key === "B") {
+            e.preventDefault();
+            cycleBrightness();
+          } else if (e.key === "g" || e.key === "G") {
+            e.preventDefault();
+            glowEnabled = !glowEnabled;
+            updateGlowState();
+          }
+        });
+
+        // Fullscreen change listeners
+        document.addEventListener("fullscreenchange", updateFullscreenButton);
+        document.addEventListener(
+          "webkitfullscreenchange",
+          updateFullscreenButton,
+        );
+        document.addEventListener(
+          "mozfullscreenchange",
+          updateFullscreenButton,
+        );
+        document.addEventListener("MSFullscreenChange", updateFullscreenButton);
+
+        // ---------- Initialise ----------
+        function init() {
+          brightnessValue = 100;
+          glowEnabled = true;
+          updateBrightnessLabel();
+          updateGlowState(); // calls applyBrightness
+          updateFullscreenButton();
+          applyBrightness(); // double ensure
+        }
+
+        init();
+
+        // Prevent context menu on canvas (avoid accidental right-click menu)
+        canvas.addEventListener("contextmenu", function (e) {
+          e.preventDefault();
+        });
+      })();
+    </script>
+    <!-- Bootstrap JS (optional, for potential components) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
